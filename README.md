@@ -1,8 +1,6 @@
 # TunedIn: AI-Powered Music Recommendation System
 
-> Your AI-powered guide to the perfect soundtrack.
-
-TunedIn is an advanced AI music recommendation system that personalizes song suggestions using Graph Neural Networks (GNNs), user listening habits, and audio feature analysis to create a seamless and intelligent music discovery experience.
+TunedIn is an AI music recommendation system that personalizes song suggestions using Graph Neural Networks (GNNs), user listening habits, and audio feature analysis to create a seamless and intelligent music discovery experience.
 
 ## Project Objective
 
