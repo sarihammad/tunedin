@@ -47,7 +47,7 @@ tunedin/
 - **Embedding Storage**: FAISS, ChromaDB
 - **Audio Feature Extraction**: Librosa, Spotify API
 - **Backend API**: Python, FastAPI
-- **Frontend** (Optional): Streamlit, React
+- **Frontend**: Streamlit, React
 - **Deployment**: Docker, Kubernetes
 
 ## Getting Started
@@ -86,7 +86,3 @@ python main.py
 - **Million Song Dataset**: Large-scale song metadata and audio features
 - **Spotify API / Last.fm API**: Real-time user listening history and song metadata
 - **MusicBrainz Dataset**: Knowledge graph of artists, albums, and relationships
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
