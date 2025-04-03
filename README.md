@@ -2,7 +2,7 @@
 
 TunedIn is an AI music recommendation system that personalizes song suggestions using Graph Neural Networks (GNNs), user listening habits, and audio feature analysis to create a seamless and intelligent music discovery experience.
 
-## Project Objective
+## Project Outline
 
 TunedIn is a next-gen music recommendation system that:
 
@@ -50,6 +50,12 @@ tunedin/
 - **Frontend**: Streamlit, React
 - **Deployment**: Docker, Kubernetes
 
+## Datasets
+
+- **Million Song Dataset**: Large-scale song metadata and audio features
+- **Spotify API / Last.fm API**: Real-time user listening history and song metadata
+- **MusicBrainz Dataset**: Knowledge graph of artists, albums, and relationships
+
 ## Getting Started
 
 ### Prerequisites
@@ -80,9 +86,3 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
-
-## Datasets
-
-- **Million Song Dataset**: Large-scale song metadata and audio features
-- **Spotify API / Last.fm API**: Real-time user listening history and song metadata
-- **MusicBrainz Dataset**: Knowledge graph of artists, albums, and relationships
