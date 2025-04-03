@@ -44,6 +44,73 @@ def parse_args():
     
     return parser.parse_args()
 
+def log_graph_stats(graph):
+    """Compute and log the total number of nodes and edges in the heterogeneous graph."""
+    total_nodes = 0
+    # Sum node counts from each node type defined in config
+    for node_type in [config.USER_NODE_TYPE, config.SONG_NODE_TYPE, config.ARTIST_NODE_TYPE,
+                      config.ALBUM_NODE_TYPE, config.GENRE_NODE_TYPE]:
+        if node_type in graph:
+            total_nodes += graph[node_type].num_nodes
+    total_edges = 0
+    # Loop through all edge types in the hetero graph metadata
+    for src, rel, dst in graph.metadata()[1]:
+        if (src, rel, dst) in graph:
+            total_edges += graph[(src, rel, dst)].edge_index.size(1)
+    logger.info(f"Built graph with {total_nodes} nodes and {total_edges} edges")
+
+def train(args):
+    logger.info(f"Training {args.model} model on {args.dataset} dataset")
+    
+    # Load dataset
+    data = load_dataset(args.dataset)
+    logger.info(f"Loaded {args.dataset} dataset with {len(data)} entries")
+    
+    # Build graph
+    graph = build_graph(data)
+    log_graph_stats(graph)
+    
+    # Initialize model based on args.model (code unchanged)
+    if args.model == "gcn":
+        model = GCNModel(
+            input_dim=graph.number_of_nodes() if hasattr(graph, "number_of_nodes") else None,
+            embedding_dim=args.embedding_dim,
+            num_layers=config.NUM_GNN_LAYERS
+        )
+    elif args.model == "gat":
+        model = GATModel(
+            input_dim=graph.number_of_nodes() if hasattr(graph, "number_of_nodes") else None,
+            embedding_dim=args.embedding_dim,
+            num_layers=config.NUM_GNN_LAYERS
+        )
+    elif args.model == "lightgcn":
+        model = LightGCNModel(
+            input_dim=graph.number_of_nodes() if hasattr(graph, "number_of_nodes") else None,
+            embedding_dim=args.embedding_dim,
+            num_layers=config.NUM_GNN_LAYERS
+        )
+    elif args.model == "graphsage":
+        model = GraphSAGEModel(
+            input_dim=graph.number_of_nodes() if hasattr(graph, "number_of_nodes") else None,
+            embedding_dim=args.embedding_dim,
+            num_layers=config.NUM_GNN_LAYERS
+        )
+    
+    # Train model
+    logger.info(f"Training {args.model} model for {args.epochs} epochs")
+    model.train(
+        graph=graph,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.lr
+    )
+    
+    # Save model
+    model_path = os.path.join(config.MODELS_DIR, f"{args.model}_{args.dataset}.pt")
+    model.save(model_path)
+    logger.info(f"Model saved to {model_path}")
+
+
 def train(args):
     """Train the GNN model."""
     logger.info(f"Training {args.model} model on {args.dataset} dataset")
