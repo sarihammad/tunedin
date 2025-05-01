@@ -60,58 +60,6 @@ def log_graph_stats(graph):
     logger.info(f"Built graph with {total_nodes} nodes and {total_edges} edges")
 
 def train(args):
-    logger.info(f"Training {args.model} model on {args.dataset} dataset")
-    
-    # Load dataset
-    data = load_dataset(args.dataset)
-    logger.info(f"Loaded {args.dataset} dataset with {len(data)} entries")
-    
-    # Build graph
-    graph = build_graph(data)
-    log_graph_stats(graph)
-    
-    # Initialize model based on args.model (code unchanged)
-    if args.model == "gcn":
-        model = GCNModel(
-            input_dim=graph.number_of_nodes() if hasattr(graph, "number_of_nodes") else None,
-            embedding_dim=args.embedding_dim,
-            num_layers=config.NUM_GNN_LAYERS
-        )
-    elif args.model == "gat":
-        model = GATModel(
-            input_dim=graph.number_of_nodes() if hasattr(graph, "number_of_nodes") else None,
-            embedding_dim=args.embedding_dim,
-            num_layers=config.NUM_GNN_LAYERS
-        )
-    elif args.model == "lightgcn":
-        model = LightGCNModel(
-            input_dim=graph.number_of_nodes() if hasattr(graph, "number_of_nodes") else None,
-            embedding_dim=args.embedding_dim,
-            num_layers=config.NUM_GNN_LAYERS
-        )
-    elif args.model == "graphsage":
-        model = GraphSAGEModel(
-            input_dim=graph.number_of_nodes() if hasattr(graph, "number_of_nodes") else None,
-            embedding_dim=args.embedding_dim,
-            num_layers=config.NUM_GNN_LAYERS
-        )
-    
-    # Train model
-    logger.info(f"Training {args.model} model for {args.epochs} epochs")
-    model.train(
-        graph=graph,
-        epochs=args.epochs,
-        batch_size=args.batch_size,
-        learning_rate=args.lr
-    )
-    
-    # Save model
-    model_path = os.path.join(config.MODELS_DIR, f"{args.model}_{args.dataset}.pt")
-    model.save(model_path)
-    logger.info(f"Model saved to {model_path}")
-
-
-def train(args):
     """Train the GNN model."""
     logger.info(f"Training {args.model} model on {args.dataset} dataset")
     
