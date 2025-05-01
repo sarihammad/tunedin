@@ -10,7 +10,7 @@ import tempfile  # Added import for temporary file handling
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import config
+import backend.config as config
 from utils.data_loader import create_mock_spotify_dataset
 from utils.graph_builder import build_graph
 from models.gcn import GCNModel

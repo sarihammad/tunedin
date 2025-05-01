@@ -15,7 +15,7 @@ from torch_geometric.transforms import ToUndirected
 
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import config
+import backend.config as config
 
 def build_graph(dataset):
     """

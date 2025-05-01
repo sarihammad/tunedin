@@ -7,7 +7,7 @@ import os
 import sys
 from loguru import logger
 
-import config
+import backend.config as config
 from utils.data_loader import load_dataset
 from utils.graph_builder import build_graph
 from models.gcn import GCNModel

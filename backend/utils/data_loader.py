@@ -14,7 +14,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import config
+import backend.config as config
 
 # High-level function to load a dataset by its name.
 # Decides which specific loader function to call based on the dataset_name parameter.

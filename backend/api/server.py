@@ -25,7 +25,7 @@ from datetime import datetime
 from loguru import logger
 
 # Local Application Imports
-import config
+import backend.config as config
 from api.routes import router as api_router
 from api.services.recommendation_service import RecommendationService
 from models.gcn import GCNModel

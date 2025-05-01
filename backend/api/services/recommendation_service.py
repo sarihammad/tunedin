@@ -5,7 +5,7 @@ It supports personalized user recommendations, song similarity queries, and cold
 
 import torch
 from fastapi import HTTPException
-import config
+import backend.config as config
 from loguru import logger
 
 # Core service layer for GNN-based music recommendations
@@ -241,7 +241,7 @@ class RecommendationService:
             raise HTTPException(status_code=400, detail="Only GraphSAGE model supports inductive learning for cold-start users")
 
         try:
-            import config
+            import backend.config as config
 
             # Construct a padded feature vector for the new user's audio features
             feature_vector = torch.zeros(config.EMBEDDING_DIM)
@@ -293,7 +293,7 @@ class RecommendationService:
             HTTPException: If model not found, graph not initialized, or training errors occur.
         """
         import os   
-        import config
+        import backend.config as config
 
         if model_name not in self.models:
             raise HTTPException(status_code=404, detail=f"Model {model_name} not found")
