@@ -85,11 +85,29 @@ class GraphSAGEModel(torch.nn.Module):
     """
     GraphSAGE model for recommendation.
     """
-    def __init__(self, input_dim, embedding_dim=128, num_layers=2, aggr='mean'):
+    def __init__(self, input_dim, embedding_dim=128, num_layers=2, aggr='mean', user_feature_dim=None):
         super().__init__()
         self.embedding_dim = embedding_dim
         self.num_layers = num_layers
         self.aggr = aggr
+
+        if user_feature_dim is None:
+            raise ValueError("user_feature_dim must be provided for cold-start projection")
+        self.user_feature_dim = user_feature_dim
+
+        # Projection layer for user features
+        self.user_feature_projection = nn.Sequential(
+            nn.Linear(user_feature_dim, embedding_dim),
+            nn.ReLU(),
+            nn.LayerNorm(embedding_dim)
+        )
+
+        # Optionally, projection for item features can be added here as well
+        # self.item_feature_projection = nn.Sequential(
+        #     nn.Linear(item_feature_dim, embedding_dim),
+        #     nn.ReLU(),
+        #     nn.LayerNorm(embedding_dim)
+        # )
         
         # Create base GNN model
         self.encoder = GraphSAGEEncoder(
@@ -371,8 +389,11 @@ class GraphSAGEModel(torch.nn.Module):
         # Create a dummy graph for the new users
         dummy_graph = HeteroData()
         
-        # Add user and item features
-        dummy_graph[config.USER_NODE_TYPE].x = user_features
+        # Project user features to embedding space
+        projected_user_features = self.user_feature_projection(user_features)
+        dummy_graph[config.USER_NODE_TYPE].x = projected_user_features
+        # Optionally, project item features if needed:
+        # projected_item_features = self.item_feature_projection(item_features)
         dummy_graph[config.SONG_NODE_TYPE].x = item_features
         
         # Add dummy edges (connect each user to a dummy item)
@@ -421,7 +442,9 @@ class GraphSAGEModel(torch.nn.Module):
             'aggr': self.aggr,
             'is_trained': self.is_trained,
             'user_embedding': self.user_embedding,
-            'item_embedding': self.item_embedding
+            'item_embedding': self.item_embedding,
+            # Save user_feature_dim for loading
+            'user_feature_dim': getattr(self, "user_feature_dim", 20)  # fallback to 20 if not present
         }, path)
         
         logger.info(f"Model saved to {path}")
@@ -438,13 +461,14 @@ class GraphSAGEModel(torch.nn.Module):
             GraphSAGEModel: Loaded model
         """
         checkpoint = torch.load(path)
-        
-        # Create model
+        # Use saved user_feature_dim or fallback to 20 (document as assumption)
+        user_feature_dim = checkpoint.get('user_feature_dim', 20)  # Assumed default if not available
         model = cls(
             input_dim=None,  # Not needed when loading
             embedding_dim=checkpoint['embedding_dim'],
             num_layers=checkpoint['num_layers'],
-            aggr=checkpoint.get('aggr', 'mean')
+            aggr=checkpoint.get('aggr', 'mean'),
+            user_feature_dim=user_feature_dim
         )
         
         # Load state
