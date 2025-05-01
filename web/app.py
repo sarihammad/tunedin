@@ -1,4 +1,10 @@
 """
+app.py
+
+Streamlit UI for the TunedIn recommendation system.
+Supports model selection, user/song/feature-based recommendations, and displays song metadata.
+"""
+"""
 Streamlit web interface for the TunedIn recommendation system.
 """
 import os
@@ -17,7 +23,7 @@ import config
 # API URL
 API_URL = f"http://{config.API_HOST}:{config.API_PORT}"
 
-# Page configuration
+# Configure the layout and meta info of the Streamlit app
 st.set_page_config(
     page_title="TunedIn - AI Music Recommendations",
     page_icon="🎵",
@@ -25,7 +31,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS
+# Inject custom CSS for improved UI styling
 st.markdown("""
 <style>
     .main-header {
@@ -93,7 +99,7 @@ model_name = st.sidebar.selectbox(
     index=0
 )
 
-# Get API status
+# Check API availability and metadata
 @st.cache_data(ttl=60)
 def get_api_status():
     try:
@@ -121,13 +127,14 @@ num_recommendations = st.sidebar.slider("Number of Recommendations", 1, 20, 10)
 # Tabs
 tab1, tab2, tab3 = st.tabs(["User Recommendations", "Song Recommendations", "Feature-based Recommendations"])
 
-# Function to display recommendations
+# Render recommendations as UI cards with expandable audio features
 def display_recommendations(recommendations: List[Dict[str, Any]]):
     if not recommendations:
         st.warning("No recommendations found.")
         return
     
     for i, rec in enumerate(recommendations):
+        # Display each recommended song in a styled card
         with st.container():
             st.markdown(f"""
             <div class='recommendation-card'>
@@ -152,7 +159,7 @@ def display_recommendations(recommendations: List[Dict[str, Any]]):
                 else:
                     st.info("No audio features available for this song.")
 
-# User Recommendations Tab
+# --- User Recommendations Tab ---
 with tab1:
     st.markdown("### Get Recommendations for a User")
     st.write("Enter a user ID to get personalized recommendations.")
@@ -181,7 +188,7 @@ with tab1:
         except Exception as e:
             st.error(f"Error: {str(e)}")
 
-# Song Recommendations Tab
+# --- Song Recommendations Tab ---
 with tab2:
     st.markdown("### Get Similar Song Recommendations")
     st.write("Enter a song ID to find similar songs.")
@@ -208,7 +215,7 @@ with tab2:
         except Exception as e:
             st.error(f"Error: {str(e)}")
 
-# Feature-based Recommendations Tab
+# --- Feature-based Recommendations Tab ---
 with tab3:
     st.markdown("### Get Recommendations Based on Features")
     st.write("Specify audio features to get recommendations for new users (cold-start).")
@@ -271,4 +278,4 @@ st.write("""
 if __name__ == "__main__":
     pass
     # To run the app, use the following command:
-    # streamlit run web/app.py 
+    # streamlit run web/app.py
