@@ -8,6 +8,8 @@ and exposes endpoints for recommendation, model training, and model metadata acc
 import os
 import sys
 
+from api.middleware import APIKeyMiddleware
+
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -19,6 +21,7 @@ from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Optional, Any
+from datetime import datetime
 from loguru import logger
 
 # Local Application Imports
@@ -33,6 +36,11 @@ from schemas import *
 from utils.data_loader import load_dataset
 from utils.graph_builder import build_graph
 from utils.model_loader import load_model
+from datetime import datetime
+from utils.model_reloader import watch_model_files
+from api.dependencies import verify_admin
+
+# model_train_times = {}  # in-memory store
 
 # Create FastAPI app
 app = FastAPI(
@@ -49,6 +57,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(APIKeyMiddleware) 
 
 app.include_router(api_router, prefix="/api")
 
@@ -124,6 +134,7 @@ async def startup_event():
                     num_layers=config.NUM_GNN_LAYERS
                 )
         
+        watch_model_files(models, config.MODELS_DIR)
         logger.info("API server startup complete")
     
     except Exception as e:
@@ -156,6 +167,7 @@ async def get_models(service: RecommendationService = Depends(get_recommendation
         for name, model in service.models.items()
     }
 
+
 @app.post("/recommend/user", response_model=RecommendationResponse)
 async def recommend_for_user(
     request: RecommendationRequest,
@@ -184,7 +196,8 @@ async def recommend_from_features(
     # Endpoint to get recommendations based on user features
     return await service.recommend_from_features(request, model_name)
 
-@app.post("/train/{model_name}")
+
+@app.post("/train/{model_name}", dependencies=[Depends(verify_admin)])
 async def train_model(
     model_name: str,
     epochs: int = Query(10, description="Number of training epochs"),
@@ -192,7 +205,33 @@ async def train_model(
     service: RecommendationService = Depends(get_recommendation_service)
 ):
     # Endpoint to train a specified model with given parameters
-    return await service.train_model(model_name, epochs, learning_rate)
+    result = await service.train_model(model_name, epochs, learning_rate)
+    service.models[model_name].loss_history = result.get("loss", [])
+    service.models[model_name].last_trained = datetime.utcnow().isoformat()
+    return result
+
+@app.get("/status/{model_name}", response_model=Dict[str, Any])
+async def get_model_status(
+    model_name: str,
+    service: RecommendationService = Depends(get_recommendation_service)
+):
+    model = service.models.get(model_name)
+    if not model:
+        raise HTTPException(status_code=404, detail="Model not found")
+    
+    recommendations = []
+    try:
+        recommendations = model.recommend(user_indices=torch.tensor([0]), top_k=5)
+    except:
+        pass  # model may not be trained or user_0 doesn't exist
+    
+    return {
+        "model_name": model_name,
+        "is_trained": model.is_trained,
+        "last_trained": getattr(model, "last_trained", None),
+        "training_loss_history": getattr(model, "loss_history", []),
+        "sample_recommendations": recommendations[0] if recommendations else []
+    }
 
 def start_server():
     """
