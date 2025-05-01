@@ -44,6 +44,21 @@ def parse_args():
     
     return parser.parse_args()
 
+def log_graph_stats(graph):
+    """Compute and log the total number of nodes and edges in the heterogeneous graph."""
+    total_nodes = 0
+    # Sum node counts from each node type defined in config
+    for node_type in [config.USER_NODE_TYPE, config.SONG_NODE_TYPE, config.ARTIST_NODE_TYPE,
+                      config.ALBUM_NODE_TYPE, config.GENRE_NODE_TYPE]:
+        if node_type in graph:
+            total_nodes += graph[node_type].num_nodes
+    total_edges = 0
+    # Loop through all edge types in the hetero graph metadata
+    for src, rel, dst in graph.metadata()[1]:
+        if (src, rel, dst) in graph:
+            total_edges += graph[(src, rel, dst)].edge_index.size(1)
+    logger.info(f"Built graph with {total_nodes} nodes and {total_edges} edges")
+
 def train(args):
     """Train the GNN model."""
     logger.info(f"Training {args.model} model on {args.dataset} dataset")
