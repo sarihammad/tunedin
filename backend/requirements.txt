@@ -1,0 +1,50 @@
+# Core libraries
+numpy
+pandas
+scipy
+scikit-learn
+
+# Deep Learning
+torch
+torchvision
+torchaudio
+
+# Graph Neural Networks
+torch-geometric
+torch-scatter
+torch-sparse
+networkx
+
+# Audio and Music
+librosa
+spotipy
+
+# Vector Search
+faiss-cpu
+chromadb
+
+# Web and API
+fastapi
+uvicorn
+pydantic
+streamlit
+requests
+
+# Data Viz and Processing
+tqdm
+matplotlib
+seaborn
+plotly
+
+# Testing
+pytest
+httpx
+
+# Utilities and Logging
+python-dotenv
+loguru
+
+# Formatting and Linting
+black
+isort
+ruff

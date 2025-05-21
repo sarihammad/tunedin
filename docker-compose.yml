@@ -1,11 +1,7 @@
-
-
-version: "3.9"
-
 services:
   api:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     container_name: tunedin-api
     ports:
@@ -19,11 +15,9 @@ services:
     command: ["uvicorn", "api.server:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
   frontend:
-    image: streamlit/streamlit
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: tunedin-frontend
     ports:
-      - "8501:8501"
-    volumes:
-      - .:/app
-    working_dir: /app/web
-    command: ["streamlit", "run", "app.py", "--server.port=8501", "--server.enableCORS=false"]
+      - "3000:3000"
