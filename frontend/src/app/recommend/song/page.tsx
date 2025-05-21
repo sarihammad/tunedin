@@ -3,10 +3,18 @@
 'use client'
 import { useState } from 'react'
 import { fetchFromAPI } from '@/lib/api'
+import { MusicalNoteIcon } from '@heroicons/react/24/solid'
+
+interface Recommendation {
+  song_name: string;
+  artist_name: string;
+  album_name: string;
+  genre: string;
+}
 
 export default function SongRecommendationPage() {
   const [songId, setSongId] = useState('song_0')
-  const [recommendations, setRecommendations] = useState<any[]>([])
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [loading, setLoading] = useState(false)
 
   async function getRecommendations() {
@@ -20,44 +28,74 @@ export default function SongRecommendationPage() {
         }),
       })
       setRecommendations(data.recommendations)
-    } catch (err: any) {
-      alert(err.message)
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message)
+      } else {
+        alert('An unexpected error occurred')
+      }
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <main className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4">Recommend Similar Songs</h1>
-      <input
-        value={songId}
-        onChange={(e) => setSongId(e.target.value)}
-        className="border p-2 mb-4 w-full"
-        placeholder="Enter song ID (e.g., song_0)"
-      />
-      <button
-        onClick={getRecommendations}
-        disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        {loading ? 'Loading...' : 'Get Recommendations'}
-      </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-300 via-gray-700 to-black text-white flex flex-col items-center p-8 sm:p-20">
+      <header className="flex flex-col items-center gap-4 animate-fadeIn">
+        <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-100 to-gray-400 animate-slideUp">
+          Song Recommendations
+        </h1>
+        <p className="text-lg text-gray-300 animate-fadeInDelay">
+          Discover songs that match your vibe and style.
+        </p>
+      </header>
 
-      <div className="mt-6">
-        {recommendations.length > 0 ? (
-          <ul className="space-y-3">
-            {recommendations.map((rec, i) => (
-              <li key={i} className="border rounded p-3">
-                <div className="font-semibold">{rec.song_name}</div>
-                <div className="text-sm text-gray-600">
+      <main className="flex flex-col items-center gap-8 mt-10 w-full max-w-3xl">
+        <div className="w-full">
+          <input
+            value={songId}
+            onChange={(e) => setSongId(e.target.value)}
+            className="w-full p-4 rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+            placeholder="Enter song ID (e.g., song_0)"
+          />
+        </div>
+        <button
+          onClick={getRecommendations}
+          disabled={loading}
+          className={`bg-gradient-to-r from-red-500 to-red-700 text-white font-medium py-4 px-8 rounded-lg transition transform hover:scale-105 ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        >
+          {loading ? 'Loading...' : 'Get Recommendations'}
+        </button>
+
+        <div className="mt-10 w-full">
+          {recommendations.length > 0 ? (
+            <ul className="grid grid-cols-1 gap-6">
+              {recommendations.map((rec, i) => (
+                <li
+                  key={i}
+                  className="bg-gray-800 p-6 rounded-lg hover:shadow-lg hover:scale-105 transition transform hover:-translate-y-1"
+                >
+                  <MusicalNoteIcon className="w-10 h-10 text-red-500 mb-4 hover:rotate-12 transition-transform" />
+                  <div className="font-semibold text-xl text-white">
+                    {rec.song_name}
+                  </div>
+                  <div className="text-sm text-gray-400 mt-2">
                     {rec.artist_name}, {rec.album_name}, {rec.genre}
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-      </div>
-    </main>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-400 text-center">
+              {loading
+                ? 'Fetching recommendations...'
+                : 'No recommendations available. Try again!'}
+            </p>
+          )}
+        </div>
+      </main>
+    </div>
   )
 }

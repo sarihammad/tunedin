@@ -1,7 +1,15 @@
-"use client";
+'use client';
 
 import { useState } from "react";
-import { fetchFromAPI } from '@/lib/api'
+import { fetchFromAPI } from '@/lib/api';
+import { MusicalNoteIcon } from '@heroicons/react/24/solid';
+
+interface Recommendation {
+  song_name: string;
+  artist_name: string;
+  album_name: string;
+  genre: string;
+}
 
 export default function FeatureRecommendationPage() {
   const [features, setFeatures] = useState({
@@ -16,7 +24,7 @@ export default function FeatureRecommendationPage() {
     loudness: -8.0,
   });
 
-  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (key: string, value: number) => {
@@ -41,51 +49,75 @@ export default function FeatureRecommendationPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold mb-6">Feature-Based Recommendations</h1>
-      <p className="mb-4 text-gray-600">Select audio feature values to get personalized song recommendations.</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-300 via-gray-700 to-black text-white flex flex-col items-center p-8 sm:p-20">
+      <header className="flex flex-col items-center gap-4 animate-fadeIn">
+        <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-100 to-gray-400 animate-slideUp">
+          Feature-Based Recommendations
+        </h1>
+        <p className="text-lg text-gray-300 animate-fadeInDelay">
+          Select audio feature values to get personalized song recommendations.
+        </p>
+      </header>
 
-      {Object.entries(features).map(([key, value]) => (
-        <div key={key} className="mb-4">
-          <label htmlFor={key} className="block font-medium capitalize mb-1">
-            {key.replace(/_/g, " ")}
-          </label>
-          <input
-            type="range"
-            id={key}
-            min={key === "tempo" ? 60 : key === "loudness" ? -20 : 0}
-            max={key === "tempo" ? 200 : key === "loudness" ? 0 : 1}
-            step={key === "tempo" ? 1 : 0.01}
-            value={value}
-            onChange={(e) => handleChange(key, parseFloat(e.target.value))}
-            className="w-full"
-          />
-          <span className="text-sm text-gray-500">{value.toFixed(2)}</span>
+      <main className="flex flex-col items-center gap-8 mt-10 w-full max-w-3xl">
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+          {Object.entries(features).map(([key, value]) => (
+            <div key={key} className="bg-gray-800 p-4 rounded-lg">
+              <label htmlFor={key} className="block font-medium capitalize mb-1 text-white">
+                {key.replace(/_/g, " ")}
+              </label>
+              <input
+                type="range"
+                id={key}
+                min={key === "tempo" ? 60 : key === "loudness" ? -20 : 0}
+                max={key === "tempo" ? 200 : key === "loudness" ? 0 : 1}
+                step={key === "tempo" ? 1 : 0.01}
+                value={value}
+                onChange={(e) => handleChange(key, parseFloat(e.target.value))}
+                className="w-full mt-2"
+              />
+              <span className="text-sm text-gray-500">{value.toFixed(2)}</span>
+            </div>
+          ))}
         </div>
-      ))}
 
-      <button
-        onClick={fetchRecommendations}
-        className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        disabled={loading}
-      >
-        {loading ? "Loading..." : "Get Recommendations"}
-      </button>
+        <button
+          onClick={fetchRecommendations}
+          className={`bg-gradient-to-r from-red-500 to-red-700 text-white font-medium py-4 px-8 rounded-lg transition transform hover:scale-105 ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Get Recommendations"}
+        </button>
 
-      {recommendations.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Recommendations</h2>
-          <ul className="space-y-4">
-            {recommendations.map((rec, i) => (
-              <li key={i} className="border rounded p-4 shadow-sm">
-                <p className="font-bold">{rec.song_name}</p>
-                <p className="text-sm text-gray-600">{rec.artist_name} — {rec.album_name}</p>
-                <p className="text-sm text-gray-500">Genre: {rec.genre}</p>
-              </li>
-            ))}
-          </ul>
+        <div className="mt-10 w-full">
+          {recommendations.length > 0 ? (
+            <ul className="grid grid-cols-1 gap-6">
+              {recommendations.map((rec, i) => (
+                <li
+                  key={i}
+                  className="bg-gray-800 p-6 rounded-lg hover:shadow-lg hover:scale-105 transition transform hover:-translate-y-1"
+                >
+                  <MusicalNoteIcon className="w-10 h-10 text-red-500 mb-4 hover:rotate-12 transition-transform" />
+                  <div className="font-semibold text-xl text-white">
+                    {rec.song_name}
+                  </div>
+                  <div className="text-sm text-gray-400 mt-2">
+                    {rec.artist_name}, {rec.album_name}, {rec.genre}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-400 text-center">
+              {loading
+                ? 'Fetching recommendations...'
+                : 'No recommendations available. Try again!'}
+            </p>
+          )}
         </div>
-      )}
+      </main>
     </div>
   );
 }
