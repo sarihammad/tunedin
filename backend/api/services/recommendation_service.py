@@ -5,7 +5,7 @@ It supports personalized user recommendations, song similarity queries, and cold
 
 import torch
 from fastapi import HTTPException
-import backend.config as config
+import config
 from loguru import logger
 
 # Core service layer for GNN-based music recommendations
