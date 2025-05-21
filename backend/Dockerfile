@@ -1,10 +1,14 @@
 
 
 # Use official Python base image
-FROM python:alpine
-
+FROM pytorch/pytorch:latest
 # Set working directory
 WORKDIR /app
+
+# Install system dependencies required for building Python packages
+RUN apt-get update && \
+    apt-get install -y gcc build-essential && \
+    apt-get clean
 
 # Install dependencies
 COPY requirements.txt .
