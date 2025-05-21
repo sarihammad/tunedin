@@ -1,50 +1,50 @@
 # Core libraries
-numpy>=1.24.3
-pandas>=2.0.3
-scipy>=1.10.1
-scikit-learn>=1.3.0
+numpy
+pandas
+scipy
+scikit-learn
 
 # Deep Learning
-torch>=2.0.1
-torchvision>=0.15.2
-torchaudio>=2.0.2
+torch
+torchvision
+torchaudio
 
 # Graph Neural Networks
-torch-geometric>=2.3.1
-torch-scatter>=2.1.1
-torch-sparse>=0.6.17
-networkx>=3.1
+torch-geometric
+torch-scatter
+torch-sparse
+networkx
 
 # Audio and Music
-librosa>=0.10.0
-spotipy>=2.23.0
+librosa
+spotipy
 
 # Vector Search
-faiss-cpu>=1.7.4
-chromadb>=0.4.6
+faiss-cpu
+chromadb
 
 # Web and API
-fastapi>=0.100.0
-uvicorn>=0.22.0
-pydantic>=2.0.3
-streamlit>=1.24.1
-requests>=2.31.0
+fastapi
+uvicorn
+pydantic
+streamlit
+requests
 
 # Data Viz and Processing
-tqdm>=4.65.0
-matplotlib>=3.7.2
-seaborn>=0.12.2
-plotly>=5.15.0
+tqdm
+matplotlib
+seaborn
+plotly
 
 # Testing
-pytest>=7.4.0
-httpx>=0.24.1
+pytest
+httpx
 
 # Utilities and Logging
-python-dotenv>=1.0.0
-loguru>=0.7.0
+python-dotenv
+loguru
 
 # Formatting and Linting
-black>=23.7.0
-isort>=5.12.0
-ruff>=0.1.0
+black
+isort
+ruff
