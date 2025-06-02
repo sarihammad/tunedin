@@ -1,3 +1,3 @@
 # TunedIn
 
-Music recommendation system.
+Music recommendation system with graph neural networks (GNNs).
