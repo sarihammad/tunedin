@@ -288,32 +288,6 @@ curl http://localhost:8000/api/health
 
 ---
 
-## Configuration
-
-### Environment Variables
-
-```yaml
-# Database
-DATABASE_URL: postgresql://user:password@localhost:5432/tunedin
-REDIS_URL: redis://localhost:6379
-
-# Authentication
-NEXTAUTH_SECRET: your-secret-key
-NEXTAUTH_URL: http://localhost:3000
-
-# OAuth Providers
-GOOGLE_CLIENT_ID: your-google-client-id
-GOOGLE_CLIENT_SECRET: your-google-client-secret
-
-# Model Configuration
-MODEL_BATCH_SIZE: 64
-MODEL_EPOCHS: 100
-MODEL_LEARNING_RATE: 0.001
-EMBEDDING_DIM: 128
-```
-
----
-
 ## Development
 
 ### Local Development
