@@ -1,6 +1,6 @@
 # TunedIn
 
-A comprehensive music recommendation system built with Graph Neural Networks (GNNs), FastAPI backend, and Next.js frontend. Features collaborative filtering, content-based filtering, and advanced graph-based recommendations using various GNN architectures.
+A music recommendation system built with Graph Neural Networks (GNNs), FastAPI backend, and Next.js frontend. Features collaborative filtering, content-based filtering, and advanced graph-based recommendations using various GNN architectures.
 
 ---
 
