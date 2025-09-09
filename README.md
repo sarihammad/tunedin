@@ -2,7 +2,7 @@
 
 A music recommendation system that combines collaborative filtering with content-based features for personalized music discovery.
 
-## Key Performance Indicators
+## Results
 
 - **nDCG@10**: > 0.45 (Normalized Discounted Cumulative Gain)
 - **HR@10**: > 0.35 (Hit Rate at 10 recommendations)
